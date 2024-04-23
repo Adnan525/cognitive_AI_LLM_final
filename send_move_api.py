@@ -18,7 +18,7 @@ url = "http://127.0.0.1:5000/rl_move"
 # else:
 #     print("Error:", response.status_code)
 
-def send_moves(move: str, url: str, timeout: float = 30):
+def send_moves(move: str, url: str, timeout: float = 60):
     payload = {"move": move}
     try:
         response = requests.post(url, json=payload, timeout=timeout)

@@ -12,11 +12,13 @@ def render_move_text(moves: str):
 
 def generate_prompt(moves:str):
     temp = moves.strip()
-    prev = temp[:-4]
-    if(len(temp) <= 4):
+    temp_list = temp.split(" ")
+    print(len(temp_list))
+    prev = ' '.join(temp_list[:-1])
+    if(len(temp_list) == 1):
         prev = "NONE"
 
-    return f"In a paragraph, explain the rationale behind the last move, where all previous moves are - previous moves : {prev.strip()}, last move : {temp[-4:]}."
+    return f"In a paragraph, explain the rationale behind the last move, where all previous moves are - previous moves : {prev}, last move : {temp_list[-1]}."
 
 # print(generate_prompt("Nf3 "))
 def prepare(user_text, moves):

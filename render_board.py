@@ -22,6 +22,7 @@ board = chess.Board()
 stockfish_path = "./stockfish/stockfish-ubuntu-x86-64-avx2"
 engine = chess.engine.SimpleEngine.popen_uci(stockfish_path)
 rec_moves = ""
+pgn_moves = ""
 
 # utils
 from utils import render_move_text, generate_prompt, prepare
@@ -48,6 +49,7 @@ class ChessBoard(tk.Tk):
     def create_widgets(self, state: MyChess):
 
         global rec_moves
+        global pgn_moves
         
         # grid layout
         self.grid_rowconfigure(0, weight=1)
@@ -179,8 +181,11 @@ class ChessBoard(tk.Tk):
 
     def play_next_move(self):
         global rec_moves
+        global pgn_moves
         
-        rec_moves += send_move(board, engine) + " "
+        uci, pgn = send_move(board, engine)
+        rec_moves += uci + " "
+        pgn_moves += pgn + " "
         
         MyChess(rec_moves)       
         self.update_chess_board_display() # Update the chess board display
@@ -197,7 +202,7 @@ class ChessBoard(tk.Tk):
 
     def generate_prompt(self):
         self.user_input.delete('1.0', tk.END)
-        self.user_input.insert(tk.END, generate_prompt(rec_moves))
+        self.user_input.insert(tk.END, generate_prompt(pgn_moves))
 
 
     def get_explanation_and_update_text(self):
@@ -209,7 +214,7 @@ class ChessBoard(tk.Tk):
         self.after(500, lambda: self._get_explanation_and_update(user_text))
 
     def _get_explanation_and_update(self, user_text):
-        explanation = send_prompt(prepare(user_text, rec_moves), url_prompt)
+        explanation = send_prompt(prepare(user_text, pgn_moves), url_prompt)
         self.resp_text.insert(tk.END, f"ASSISTANT : {explanation}" + "\n")
         
     def update_chess_board_display(self):
